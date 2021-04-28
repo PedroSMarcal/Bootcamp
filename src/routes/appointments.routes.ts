@@ -1,5 +1,5 @@
-import { response, request, Router } from 'express';
-import { startOfHour, parseISO } from 'date-fns';
+import { Router } from 'express';
+import { parseISO } from 'date-fns';
 import AppointmentRepository from '../repositories/AppointmentsRepository'
 import CreateAppointmentService from '../services/CreateAppointmenrService'
 
@@ -41,3 +41,26 @@ export default appointmentsRouter;
 // appointmentsRouter.get('/', (request, response) => {
 //     return response.json({ message: 'Oi'})
 // })
+/***
+ * #Partimos de uma imagem existente
+ * FROM node:10
+ * 
+ * #Definimos a pasta e copiamos o arquivos
+ * WORKDIR /src/app
+ * COPY ../
+ * 
+ * #Instalamos as dependencias
+ * RUN yarn
+ * 
+ * #Qual porta queremos expor?
+ * EXPOSE 3333
+ * 
+ * CMD yarn start     
+ * 
+ * docker run --name gostack_postgres -e POSTGRES_PASSWORD=docker -p  
+ * netstat -a -b          
+ * 
+ * docker ps (roda os containers)
+ * docker ps -a (apresenta todo os container )
+ * docker logs |ID|
+ */
