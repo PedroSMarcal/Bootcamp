@@ -1,39 +1,45 @@
-import { isEqual } from 'date-fns';
+import { EntityRepository, Repository } from 'typeorm';
 import Appointment from '../models/Appointment';
 
-interface CreateAppointmentDTO {
-    provider: string;
-     date: Date
-}
+// interface CreateAppointmentDTO {
+//     provider: string;
+//      date: Date
+// }
 
-class AppointmentRepository {
-    private appointment: Appointment[];
+@EntityRepository(Appointment)
+class AppointmentRepository extends Repository<Appointment> {
+    public async findByDate (date: Date): Promise<Appointment | null> {
+        // const findAppointment = this.appointment.find(appointment =>
+        //     isEqual(date, appointment.date), 
+        //     ); 
+            
+        const findAppointment = await this.findOne({
+            where: { date }, 
+        });
 
-    constructor(){
-        this.appointment = [];
-    }
+            return findAppointment || null;
+        };
 
-    public all (): Appointment[] {
-        return this.appointment;
-    }
 
-    public findByDate (date: Date): Appointment | null {
-        const findAppointment = this.appointment.find(appointment =>
-             isEqual(date, appointment.date), 
-        ); 
-
-        return findAppointment || null;
-    };
+        // private appointment: Appointment[];
+    
+        // constructor(){
+        //     this.appointment = [];
+        // }
+    
+        // public all (): Appointment[] {
+        //     return this.appointment;
+        // }
 
     //provider: string, date: Date
 
-    public create({ date, provider }: CreateAppointmentDTO ): Appointment {
-        const appointment = new Appointment({ provider, date });
+    // public create({ date, provider }: CreateAppointmentDTO ): Appointment {
+    //     const appointment = new Appointment({ provider, date });
 
-        this.appointment.push(appointment);
+    //     this.appointment.push(appointment);
 
-        return appointment;
-    }
+    //     return appointment;
+    // }
 }
 
 export default AppointmentRepository;

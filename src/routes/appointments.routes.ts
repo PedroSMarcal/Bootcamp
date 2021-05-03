@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { parseISO } from 'date-fns';
+import { getCustomRepository } from 'typeorm';
 import AppointmentRepository from '../repositories/AppointmentsRepository'
 import CreateAppointmentService from '../services/CreateAppointmenrService'
 
@@ -7,30 +8,29 @@ import CreateAppointmentService from '../services/CreateAppointmenrService'
 //Receber equisição, chamar outro arquivo e devolver uma resposta
 
 const appointmentsRouter = Router();
-const appointmentsRepository = new AppointmentRepository;
+// const appointmentsRepository = new AppointmentRepository;
 
 // SoC: Separetion of Concerns (Separações de preocupações)
 
-appointmentsRouter.get('/', (request, response) => {
-    const appointments = appointmentsRepository.all();
+appointmentsRouter.get('/', async (request, response) => {
+    const appointmentsRepository = getCustomRepository(AppointmentRepository);
+    const appointments = await appointmentsRepository.find();
 
     return response.json(appointments);
 });
 
-appointmentsRouter.post('/', (request, response) => {
+appointmentsRouter.post('/', async (request, response) => {
     try{
         const { provider, date } = request.body;
-    
-    const parsedDate = parseISO(date);
+        
+        const parsedDate = parseISO(date);
 
-    const createAppointment = new CreateAppointmentService(
-        appointmentsRepository,
-        );
-    
-    const appointment = createAppointment.execute({
-        date: parsedDate, provider 
-    });
-    return response.json( appointment );
+        const createAppointment = new CreateAppointmentService();
+        
+        const appointment = await createAppointment.execute({
+            date: parsedDate, provider 
+        });
+        return response.json( appointment );
     } catch (err){
         return response.status(400).json({ message: 'This Appointment is already booked' });
     }
