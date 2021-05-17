@@ -3,45 +3,49 @@ import { parseISO } from 'date-fns';
 import { getCustomRepository } from 'typeorm';
 import AppointmentRepository from '../repositories/AppointmentsRepository'
 import CreateAppointmentService from '../services/CreateAppointmenrService'
-
-// DTO: Data Transfer Object;
-//Receber equisição, chamar outro arquivo e devolver uma resposta
+import ensureAuthenticated from '../middlewares/ensureAuthenticated'
 
 const appointmentsRouter = Router();
-// const appointmentsRepository = new AppointmentRepository;
 
-// SoC: Separetion of Concerns (Separações de preocupações)
+appointmentsRouter.use(ensureAuthenticated);
 
 appointmentsRouter.get('/', async (request, response) => {
     const appointmentsRepository = getCustomRepository(AppointmentRepository);
     const appointments = await appointmentsRepository.find();
-
+    
     return response.json(appointments);
 });
 
 appointmentsRouter.post('/', async (request, response) => {
     try{
-        const { provider, date } = request.body;
+        const { provider_id, date } = request.body;
         
         const parsedDate = parseISO(date);
-
+        
         const createAppointment = new CreateAppointmentService();
         
         const appointment = await createAppointment.execute({
-            date: parsedDate, provider 
+            date: parsedDate, provider_id 
         });
         return response.json( appointment );
     } catch (err){
         return response.status(400).json({ message: 'This Appointment is already booked' });
     }
-   }); 
+}); 
 
 export default appointmentsRouter;
 
+
+// DTO: Data Transfer Object;
+//Receber equisição, chamar outro arquivo e devolver uma resposta
+
+// const appointmentsRepository = new AppointmentRepository;
+
+// SoC: Separetion of Concerns (Separações de preocupações)
 // appointmentsRouter.get('/', (request, response) => {
-//     return response.json({ message: 'Oi'})
-// })
-/***
+    //     return response.json({ message: 'Oi'})
+    // })
+    /***
  * #Partimos de uma imagem existente
  * FROM node:10
  * 
