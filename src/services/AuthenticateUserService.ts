@@ -2,7 +2,8 @@ import { getRepository } from 'typeorm';
 import User from '../models/User';
 import { compare } from 'bcryptjs'
 import { sign } from 'jsonwebtoken';
-import authConfig  from '../config/auth'
+import authConfig  from '../config/auth';
+import AppError from '../errors/AppError';
 
 interface RequestDTO {
     email: string;
@@ -21,14 +22,14 @@ class AuthenticateUserService{
         const user = await usersRepository.findOne({ where: { email } });
 
         if (!user){
-            throw new Error('Incorret email/password combination.');
+            throw new AppError('Incorret email/password combination.', 401);
         }
 
         // user.password - senha criptografad
         const passwordMacthed = await compare(password, user.password);
 
         if (!passwordMacthed){
-            throw new Error('Incorrect email/password combination.');
+            throw new AppError('Incorrect email/password combination.', 401);
         }
 
         //experiencia do usuario / segurança
